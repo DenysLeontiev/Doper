@@ -6,8 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Code Reviewer</title>
 
-    
-    <link rel="stylesheet" href="./html/styles.css">
     <link href="https://cdn.jsdelivr.net/npm/prismjs@1/themes/prism-tomorrow.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-core.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-clike.min.js"></script>
@@ -23,7 +21,38 @@
             margin: 0;
         }
 
-        button {
+        .content-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .title {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        pre {
+            margin-top: 1.5rem;
+            background-color: #2d2d2d;
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            max-height: 40vh;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.95rem;
+        }
+
+        .title-text {
+            font-size: larger;
+            font-weight: bolder;
+        }
+
+        .btn {
             background-color: #007acc;
             color: white;
             padding: 10px 20px;
@@ -33,49 +62,60 @@
             cursor: pointer;
         }
 
-        button:hover {
+        .btn:hover {
             background-color: #005a9e;
         }
 
-        pre {
-            margin-top: 1.5rem;
-            background-color: #2d2d2d;
-            padding: 1rem;
-            border-radius: 8px;
-            overflow-x: auto;
-            max-height: 80vh;
-        }
-
-        code {
-            font-family: 'Fira Code', monospace;
-            font-size: 0.95rem;
+        .file-selection {
+            display: flex;
+            flex-direction: column;
         }
     </style>
 </head>
 
 <body>
-    <button onclick="selectFile()">Choose File for Reviewing</button>
-    <pre><code id="selectedFileDisplay" class="language-javascript"></code></pre>
-
-    <script>
-        const vscode = acquireVsCodeApi();
-
-        function selectFile() {
-            vscode.postMessage({ command: "OnFileSelected" });
-        }
-
-        window.addEventListener('message', event => {
-            const msg = event.data;
-            const fileContentDisplay = document.getElementById('selectedFileDisplay');
-
-            switch (msg.command) {
-                case 'DisplayFileContent':
-                    fileContentDisplay.textContent = msg.content;
-                    Prism.highlightElement(fileContentDisplay);
-                    break;
-            }
-        });
-    </script>
+    <div class="content-wrapper">
+        <div class="title">
+            <h1 class="title-text">AI Code Reviewer</h1>
+        </div>
+        <div class="file-selection">
+            <button onclick="selectFile()" class="btn">Choose File for Reviewing</button>
+            <pre id="selectedFileDisplayWrapper"><code id="selectedFileDisplay" class="language-javascript"></code></pre>
+        </div>
+    </div>
 </body>
+
+<script>
+    const vscode = acquireVsCodeApi();
+
+    const selectedFileDisplayWrapper = document.getElementById('selectedFileDisplayWrapper');
+    const selectedFileDisplay = document.getElementById('selectedFileDisplay');
+
+    function showSelectedFileDisplay() {
+        selectedFileDisplayWrapper.style.display = "block";
+    }
+
+    function hideSelectedFileDisplay() {
+        selectedFileDisplayWrapper.style.display = "none";
+    }
+
+    hideSelectedFileDisplay();
+
+    function selectFile() {
+        vscode.postMessage({ command: "OnFileSelected" });
+    }
+
+    window.addEventListener('message', event => {
+        const msg = event.data;
+
+        switch (msg.command) {
+            case 'DisplayFileContent':
+                selectedFileDisplay.textContent = msg.content;
+                showSelectedFileDisplay();
+                Prism.highlightElement(selectedFileDisplay);
+                break;
+        }
+    });
+</script>
 
 </html>
