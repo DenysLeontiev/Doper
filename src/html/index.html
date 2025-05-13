@@ -66,7 +66,12 @@
             background-color: #005a9e;
         }
 
-        .file-selection {
+        #file-selection {
+            display: flex;
+            flex-direction: column;
+        }
+
+        #file-refactor {
             display: flex;
             flex-direction: column;
         }
@@ -78,9 +83,15 @@
         <div class="title">
             <h1 class="title-text">AI Code Reviewer</h1>
         </div>
-        <div class="file-selection">
+        <div id="file-selection">
             <button onclick="selectFile()" class="btn">Choose File for Reviewing</button>
-            <pre id="selectedFileDisplayWrapper"><code id="selectedFileDisplay" class="language-javascript"></code></pre>
+            <pre
+                id="selectedFileDisplayWrapper"><code id="selectedFileDisplay" class="language-javascript"></code></pre>
+        </div>
+        <div id="file-refactor">
+            <button class="btn" onclick="refactorCode()">Refactor File</button>
+            <pre
+                id="refactoredFileDisplayWrapper"><code id="refactoredFileDisplay" class="language-javascript"></code></pre>
         </div>
     </div>
 </body>
@@ -91,6 +102,17 @@
     const selectedFileDisplayWrapper = document.getElementById('selectedFileDisplayWrapper');
     const selectedFileDisplay = document.getElementById('selectedFileDisplay');
 
+    const fileRefactor = document.getElementById('file-refactor');
+    const refactoredFileDisplay = document.getElementById('refactoredFileDisplay');
+
+    function selectFile() {
+        vscode.postMessage({ command: "OnFileSelected" });
+    }
+
+    function refactorCode() {
+        vscode.postMessage({command: 'OnSendToChatGPT', content: selectedFileDisplay.innerText})
+    }
+
     function showSelectedFileDisplay() {
         selectedFileDisplayWrapper.style.display = "block";
     }
@@ -99,11 +121,16 @@
         selectedFileDisplayWrapper.style.display = "none";
     }
 
-    hideSelectedFileDisplay();
-
-    function selectFile() {
-        vscode.postMessage({ command: "OnFileSelected" });
+    function showRefactoredFileDisplay() {
+        fileRefactor.style.display = "block";
     }
+
+    function hideFileRefactorDisplay() {
+        fileRefactor.style.display = "none";
+    }
+
+    hideSelectedFileDisplay();
+    hideFileRefactorDisplay();
 
     window.addEventListener('message', event => {
         const msg = event.data;
@@ -112,7 +139,14 @@
             case 'DisplayFileContent':
                 selectedFileDisplay.textContent = msg.content;
                 showSelectedFileDisplay();
+                showRefactoredFileDisplay();
                 Prism.highlightElement(selectedFileDisplay);
+                break;
+            case 'ReceivedResponseFromChatGPT':
+                refactoredFileDisplay.textContent = msg.content.output_text;
+                showRefactoredFileDisplay();
+
+                Prism.highlightElement(refactoredFileDisplay)
                 break;
         }
     });
