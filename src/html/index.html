@@ -75,6 +75,11 @@
             display: flex;
             flex-direction: column;
         }
+
+        #refactor-wrapper {
+            display: flex;
+            flex-direction: column;
+        }
     </style>
 </head>
 
@@ -88,10 +93,12 @@
             <pre
                 id="selectedFileDisplayWrapper"><code id="selectedFileDisplay" class="language-javascript"></code></pre>
         </div>
-        <div id="file-refactor">
-            <button class="btn" onclick="refactorCode()">Refactor File</button>
-            <pre
-                id="refactoredFileDisplayWrapper"><code id="refactoredFileDisplay" class="language-javascript"></code></pre>
+        <div id="refactor-wrapper">
+            <button class="btn" id="refactor-button" onclick="refactorCode()">Refactor File</button>
+            <div id="file-refactor">
+                <pre
+                    id="refactoredFileDisplayWrapper"><code id="refactoredFileDisplay" class="language-javascript"></code></pre>
+            </div>
         </div>
     </div>
 </body>
@@ -101,16 +108,19 @@
 
     const selectedFileDisplayWrapper = document.getElementById('selectedFileDisplayWrapper');
     const selectedFileDisplay = document.getElementById('selectedFileDisplay');
+    const refactorButton = document.getElementById('refactor-button');
 
     const fileRefactor = document.getElementById('file-refactor');
+    const refactoredFileDisplayWrapper = document.getElementById('refactoredFileDisplayWrapper');
     const refactoredFileDisplay = document.getElementById('refactoredFileDisplay');
 
     function selectFile() {
+        hideFileRefactorDisplay();
         vscode.postMessage({ command: "OnFileSelected" });
     }
 
     function refactorCode() {
-        vscode.postMessage({command: 'OnSendToChatGPT', content: selectedFileDisplay.innerText})
+        vscode.postMessage({ command: 'OnSendToChatGPT', content: selectedFileDisplay.innerText })
     }
 
     function showSelectedFileDisplay() {
@@ -129,8 +139,26 @@
         fileRefactor.style.display = "none";
     }
 
+    function showRefactorButton() {
+        refactorButton.style.display = "block";
+    }
+
+    function hideRefactorButton() {
+        refactorButton.style.display = "none";
+    }
+
+    function syncScroll(source, target) {
+        const scrollRatio = source.scrollTop / (source.scrollHeight - source.clientHeight);
+        const targetScrollTop = scrollRatio * (target.scrollHeight - target.clientHeight);
+        target.scrollTop = targetScrollTop;
+    }
+
+    selectedFileDisplayWrapper.addEventListener('scroll', () => syncScroll(selectedFileDisplayWrapper, refactoredFileDisplayWrapper));
+    refactoredFileDisplayWrapper.addEventListener('scroll', () => syncScroll(refactoredFileDisplayWrapper, selectedFileDisplayWrapper));
+
     hideSelectedFileDisplay();
     hideFileRefactorDisplay();
+    hideRefactorButton();
 
     window.addEventListener('message', event => {
         const msg = event.data;
@@ -140,6 +168,7 @@
                 selectedFileDisplay.textContent = msg.content;
                 showSelectedFileDisplay();
                 showRefactoredFileDisplay();
+                showRefactorButton();
                 Prism.highlightElement(selectedFileDisplay);
                 break;
             case 'ReceivedResponseFromChatGPT':
