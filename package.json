@@ -14,8 +14,8 @@
   "contributes": {
     "commands": [
       {
-        "command": "aireviewer.helloWorld",
-        "title": "Hello World"
+        "command": "aireviewer.aireviewer",
+        "title": "AI Code Reviewer"
       }
     ]
   },

@@ -4,7 +4,7 @@ import * as fs from 'fs'
 
 export function activate(context: vscode.ExtensionContext) {
 
-	const webviewPanelCommand = vscode.commands.registerCommand('aireviewer.helloWorld', async () => {
+	const webviewPanelCommand = vscode.commands.registerCommand('aireviewer.aireviewer', async () => {
 
 		let panelTitle: string = "AI Code Reviewer";
 		let panelIdentifier: string = "AI_Code_Reviewer";
