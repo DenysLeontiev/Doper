@@ -1,8 +1,14 @@
 {
-  "name": "aireviewer",
-  "displayName": "AIReviewer",
+  "name": "aicodereviewer",
+  "publisher": "AICodeReviewer",
+  "displayName": "AICodeReviewer",
   "description": "Review you code using AI models",
   "version": "0.0.1",
+  "icon": "assets/img/AICodeReviewerIcon.png",
+  "galleryBanner": {
+    "color": "#21214c",
+    "theme": "dark"
+  },
   "engines": {
     "vscode": "^1.100.0"
   },
@@ -14,18 +20,18 @@
   "contributes": {
     "commands": [
       {
-        "command": "aireviewer.aireviewer",
+        "command": "aicodereviewer.aicodereviewer",
         "title": "AI Code Reviewer"
       },
       {
-        "command": "aireviewer.reviewSelectedFile",
+        "command": "aicodereviewer.reviewSelectedFile",
         "title": "Review with AI Code Reviewer"
       }
     ],
     "menus": {
       "explorer/context": [
         {
-          "command": "aireviewer.reviewSelectedFile",
+          "command": "aicodereviewer.reviewSelectedFile",
           "when": "resourceLangId",
           "group": "navigation"
         }
