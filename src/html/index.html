@@ -12,6 +12,8 @@
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-javascript.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1/plugins/autoloader/prism-autoloader.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -80,6 +82,19 @@
             display: flex;
             flex-direction: column;
         }
+
+        .code-wrapper {
+            position: relative;
+        }
+
+        .copy-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            border: none;
+            color: #fff;
+            background-color: rgba(0, 0, 0, 0);
+        }
     </style>
 </head>
 
@@ -90,14 +105,24 @@
         </div>
         <div id="file-selection">
             <button onclick="selectFile()" class="btn">Choose File for Reviewing</button>
-            <pre
-                id="selectedFileDisplayWrapper"><code id="selectedFileDisplay" class="language-javascript"></code></pre>
+
+            <div class="code-wrapper">
+                <pre id="selectedFileDisplayWrapper">
+                <code id="selectedFileDisplay" class="language-javascript"></code></pre>
+                <button onclick="copySelectedFileContentToClipBoard(selectedFileDisplay)" id="copy-selected-file-button"
+                    class="copy-button"><i class="fa-solid fa-copy"></i></button>
+            </div>
         </div>
         <div id="refactor-wrapper">
             <button class="btn" id="refactor-button" onclick="refactorCode()">Refactor File</button>
-            <div id="file-refactor">
-                <pre
-                    id="refactoredFileDisplayWrapper"><code id="refactoredFileDisplay" class="language-javascript"></code></pre>
+
+            <div class="code-wrapper">
+                <div id="file-refactor">
+                    <pre
+                        id="refactoredFileDisplayWrapper"><code id="refactoredFileDisplay" class="language-javascript"></code></pre>
+                    <button onclick="copySelectedFileContentToClipBoard(refactoredFileDisplay)"
+                        id="copy-selected-file-button" class="copy-button"><i class="fa-solid fa-copy"></i></button>
+                </div>
             </div>
         </div>
     </div>
@@ -114,6 +139,8 @@
     const refactoredFileDisplayWrapper = document.getElementById('refactoredFileDisplayWrapper');
     const refactoredFileDisplay = document.getElementById('refactoredFileDisplay');
 
+    const copySelectedFileButton = document.getElementById('copy-selected-file-button');
+
     function selectFile() {
         hideFileRefactorDisplay();
         vscode.postMessage({ command: "OnFileSelected" });
@@ -125,10 +152,13 @@
 
     function showSelectedFileDisplay() {
         selectedFileDisplayWrapper.style.display = "block";
+        copySelectedFileButton.style.display = "block";
+        copySelectedFileButton.style.display = "block";
     }
 
     function hideSelectedFileDisplay() {
         selectedFileDisplayWrapper.style.display = "none";
+        copySelectedFileButton.style.display = "none";
     }
 
     function showRefactoredFileDisplay() {
@@ -145,6 +175,10 @@
 
     function hideRefactorButton() {
         refactorButton.style.display = "none";
+    }
+
+    function copySelectedFileContentToClipBoard(htmlToCopyFrom) {
+        navigator.clipboard.writeText(htmlToCopyFrom.textContent);
     }
 
     function syncScroll(source, target) {
