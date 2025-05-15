@@ -86,7 +86,7 @@ async function openReviewPanel(context: vscode.ExtensionContext, fileToLoad?: vs
 
 async function queryChat(content: string): Promise<OpenAI.Responses.Response> {
 
-	const model: string = "gpt-4o";
+	const model: string = "gpt-4.1-nano";
 	const instructions: string = "You are a code assistant. Refactor and imrpove code and reply with the full result ONLY as code. No comments or explanations. No markdown formatting";
 
 	const response = await openAIClient.responses.create({
