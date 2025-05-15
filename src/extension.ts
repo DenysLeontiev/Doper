@@ -9,11 +9,11 @@ const openAIClient = new OpenAI({
 
 export async function activate(context: vscode.ExtensionContext) {
 
-	const webviewPanelCommand = vscode.commands.registerCommand('aicodereviewer.aicodereviewer', async () => {
+	const webviewPanelCommand = vscode.commands.registerCommand('doper.doper', async () => {
 		openReviewPanel(context);
 	});
 
-	const reviewFileCommand = vscode.commands.registerCommand('aicodereviewer.reviewSelectedFile', async (uri: vscode.Uri) => {
+	const reviewFileCommand = vscode.commands.registerCommand('doper.doper', async (uri: vscode.Uri) => {
 		openReviewPanel(context, uri);
 	});
 

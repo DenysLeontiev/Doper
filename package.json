@@ -1,10 +1,14 @@
 {
-  "name": "aicodereviewer",
-  "publisher": "AICodeReviewer",
-  "displayName": "AICodeReviewer",
-  "description": "Review you code using AI models",
+  "name": "Doper",
+  "publisher": "DoperAI",
+  "displayName": "Doper",
+  "description": "Review you code using Doper",
   "version": "0.0.3",
   "icon": "assets/img/AICodeReviewerIcon.png",
+  "files": [
+    "src/**",
+    "assets/**"
+  ],
   "galleryBanner": {
     "color": "#21214c",
     "theme": "dark"
@@ -20,18 +24,18 @@
   "contributes": {
     "commands": [
       {
-        "command": "aicodereviewer.aicodereviewer",
+        "command": "doper.doper",
         "title": "AI Code Reviewer"
       },
       {
-        "command": "aicodereviewer.reviewSelectedFile",
+        "command": "doper.reviewSelectedFile",
         "title": "Review with AI Code Reviewer"
       }
     ],
     "menus": {
       "explorer/context": [
         {
-          "command": "aicodereviewer.reviewSelectedFile",
+          "command": "doper.reviewSelectedFile",
           "when": "resourceLangId",
           "group": "navigation"
         }
