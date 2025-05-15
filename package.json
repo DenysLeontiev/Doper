@@ -3,7 +3,7 @@
   "publisher": "DoperAI",
   "displayName": "Doper",
   "description": "Review you code using Doper",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "icon": "assets/img/AICodeReviewerIcon.png",
   "files": [
     "src/**",
