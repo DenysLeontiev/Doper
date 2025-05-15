@@ -1,10 +1,10 @@
 {
-  "name": "doper",                            
-  "publisher": "AICodeReviewer",            
-  "displayName": "Doper",                    
-  "description": "Review your code using DoperAI", 
-  "version": "0.0.6",
-  "icon": "assets/img/AICodeReviewerIcon.png", 
+  "name": "doper",
+  "publisher": "AICodeReviewer",
+  "displayName": "Doper",
+  "description": "Review your code using DoperAI",
+  "version": "0.0.7",
+  "icon": "assets/img/AICodeReviewerIcon.png",
   "galleryBanner": {
     "color": "#21214c",
     "theme": "dark"
