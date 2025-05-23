@@ -133,6 +133,12 @@
         const refactoredFileDisplay = document.getElementById('refactoredFileDisplay');
         const hintResponse = document.getElementById('hint-response');
 
+        const selectedPre = selectedFileDisplay.parentElement;
+        const refactoredPre = refactoredFileDisplay.parentElement;
+
+        selectedPre.addEventListener('scroll', () => syncScroll(selectedPre, refactoredPre));
+        refactoredPre.addEventListener('scroll', () => syncScroll(refactoredPre, selectedPre));
+        
         function selectFile() {
             hide(refactorButton);
             hide(selectedFileDisplayWrapper);
