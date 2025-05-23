@@ -95,6 +95,23 @@
             color: #fff;
             background-color: rgba(0, 0, 0, 0);
         }
+
+        .hint-container {
+            background-color: #2d2d2d;
+            border: 1px solid #cfe2ff;
+            border-radius: 16px;
+            padding: 16px;
+            margin: 16px 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .hint-container p {
+            margin: 0;
+            color: #fff;
+            font-size: 16px;
+            line-height: 1.6;
+        }
     </style>
 </head>
 
@@ -103,6 +120,7 @@
         <div class="title">
             <h1 class="title-text">AI Code Reviewer</h1>
         </div>
+
         <div id="file-selection">
             <button onclick="selectFile()" class="btn">Choose File for Reviewing</button>
 
@@ -116,12 +134,15 @@
         <div id="refactor-wrapper">
             <button class="btn" id="refactor-button" onclick="refactorCode()">Refactor File</button>
 
-            <div class="code-wrapper">
+            <div class="code-wrapper" id="refactoredFileDisplayWrapper">
                 <div id="file-refactor">
-                    <pre
-                        id="refactoredFileDisplayWrapper"><code id="refactoredFileDisplay" class="language-javascript"></code></pre>
+                    <pre><code id="refactoredFileDisplay" class="language-javascript"></code></pre>
                     <button onclick="copySelectedFileContentToClipBoard(refactoredFileDisplay)"
                         id="copy-selected-file-button" class="copy-button"><i class="fa-solid fa-copy"></i></button>
+
+                    <div class="hint-container">
+                        <p id="hint-response"></p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -140,6 +161,8 @@
     const refactoredFileDisplay = document.getElementById('refactoredFileDisplay');
 
     const copySelectedFileButton = document.getElementById('copy-selected-file-button');
+
+    const hintResponse = document.getElementById('hint-response');
 
     function selectFile() {
         hideFileRefactorDisplay();
@@ -187,6 +210,14 @@
         target.scrollTop = targetScrollTop;
     }
 
+    function showHintResponse(text) {
+        hintResponse.textContent = text;
+    }
+
+    function hideHintTextResponse() {
+        hintResponse.textContent = '';
+    }
+
     selectedFileDisplayWrapper.addEventListener('scroll', () => syncScroll(selectedFileDisplayWrapper, refactoredFileDisplayWrapper));
     refactoredFileDisplayWrapper.addEventListener('scroll', () => syncScroll(refactoredFileDisplayWrapper, selectedFileDisplayWrapper));
 
@@ -204,9 +235,15 @@
                 showRefactoredFileDisplay();
                 showRefactorButton();
                 Prism.highlightElement(selectedFileDisplay);
+
                 break;
             case 'ReceivedResponseFromChatGPT':
-                refactoredFileDisplay.textContent = msg.content.output_text;
+                let jsonResponse = JSON.parse(msg.content.output_text);
+                refactoredFileDisplay.textContent = jsonResponse.code;
+
+                let hintResponse = jsonResponse.hint;
+                showHintResponse(hintResponse);
+
                 showRefactoredFileDisplay();
 
                 Prism.highlightElement(refactoredFileDisplay)

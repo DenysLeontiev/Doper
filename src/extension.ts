@@ -37,8 +37,8 @@ async function openReviewPanel(context: vscode.ExtensionContext, fileToLoad?: vs
 		});
 
 	const filePath: vscode.Uri = vscode.Uri.file(path.join(context.extensionPath, 'src', 'html', 'index.html'));
-	// panel.webview.html = fs.readFileSync(filePath.fsPath, 'utf8');
-	panel.webview.html = getWebviewHtml();
+	panel.webview.html = fs.readFileSync(filePath.fsPath, 'utf8');
+	// panel.webview.html = getWebviewHtml();
 
 	panel.webview.onDidReceiveMessage(async message => {
 		switch (message.command) {
@@ -87,7 +87,7 @@ async function openReviewPanel(context: vscode.ExtensionContext, fileToLoad?: vs
 async function queryChat(content: string): Promise<OpenAI.Responses.Response> {
 
 	const model: string = "gpt-4.1-nano";
-	const instructions: string = "You are a code assistant. Refactor and imrpove code and reply with the full result ONLY as code. No comments or explanations. No markdown formatting";
+	const instructions: string = "You are a code assistant. Refactor and imrpove code and reply with the full result ONLY as JSON is that format {hint:'Hints from response code, some recommendation', code: 'The actual code'}. No comments or explanations. No markdown formatting";
 
 	const response = await openAIClient.responses.create({
 		model: model,
