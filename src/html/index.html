@@ -1,198 +1,225 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Doper (AI Code Reviewer)</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Doper (AI Code Reviewer)</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/prismjs@1/themes/prism-tomorrow.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-core.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-clike.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-javascript.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/prismjs@1/plugins/autoloader/prism-autoloader.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/prismjs@1/themes/prism-tomorrow.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-core.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-clike.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-javascript.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1/plugins/autoloader/prism-autoloader.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #121212;
+      color: #e0e0e0;
+      margin: 0;
+      padding: 2rem;
+    }
 
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #121212;
-            color: #e0e0e0;
-            padding: 2rem;
-            margin: 0;
-        }
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
 
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
-        }
+    .title {
+      text-align: center;
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: #90caf9;
+      margin-bottom: 1rem;
+    }
 
-        .configuration-wrapper {
-            display: flex;
-            flex-direction: row;
-        }
+    .configuration-wrapper {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
 
-        .configuration-wrapper label {
-            font-weight: bolder;
-            font-size: larger;
-            margin-left: 2px;
-        }
+    .config-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
 
-        #ai-model-selector {
-            background-color: #1e1e1e;
-            color: #e0e0e0;
-            border: 1px solid #444;
-            border-radius: 6px;
-            padding: 0.5rem 1rem;
-            margin: 0 1rem;
-            font-size: 1rem;
-            appearance: none;
-            cursor: pointer;
-            transition: border 0.2s ease, box-shadow 0.2s ease;
-        }
+    .btn {
+      background-color: #2196f3;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
 
-        #ai-model-selector:hover {
-            border-color: #90caf9;
-            box-shadow: 0 0 5px rgba(144, 202, 249, 0.5);
-        }
+    .btn:hover {
+      background-color: #1976d2;
+    }
 
-        #ai-model-selector:focus {
-            outline: none;
-            border-color: #64b5f6;
-            box-shadow: 0 0 8px rgba(100, 181, 246, 0.8);
-        }
+    .btn i {
+      font-size: 1.1rem;
+    }
 
-        .title {
-            text-align: center;
-            font-size: 2rem;
-            font-weight: bold;
-            color: #90caf9;
-        }
+    select#ai-model-selector {
+      background-color: #1e1e1e;
+      color: #e0e0e0;
+      border: 1px solid #444;
+      border-radius: 6px;
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      transition: border 0.2s ease, box-shadow 0.2s ease;
+    }
 
-        .btn {
-            background-color: #2196f3;
-            color: white;
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            width: 100%;
-        }
+    select#ai-model-selector:hover {
+      border-color: #90caf9;
+      box-shadow: 0 0 5px rgba(144, 202, 249, 0.5);
+    }
 
-        .btn:hover {
-            background-color: #1976d2;
-        }
+    select#ai-model-selector:focus {
+      outline: none;
+      border-color: #64b5f6;
+      box-shadow: 0 0 8px rgba(100, 181, 246, 0.8);
+    }
 
-        .code-section {
-            position: relative;
-            background-color: #1e1e1e;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-        }
+    .code-section {
+      position: relative;
+      background-color: #1e1e1e;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    }
 
-        pre {
-            margin: 0;
-            padding: 1rem;
-            max-height: 300px;
-            overflow-x: auto;
-            overflow-y: auto;
-        }
+    pre {
+      margin: 0;
+      padding: 1rem;
+      max-height: 300px;
+      overflow: auto;
+    }
 
-        .copy-button {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background-color: transparent;
-            border: none;
-            color: #ffffff;
-            font-size: 1.2rem;
-            cursor: pointer;
-        }
+    .copy-button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: transparent;
+      border: none;
+      color: #ffffff;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
 
-        .hint-container {
-            background-color: #263238;
-            border-left: 5px solid #29b6f6;
-            padding: 1rem;
-            border-radius: 8px;
-            margin-top: 1rem;
-            color: #b0bec5;
-            font-size: 1rem;
-        }
+    .copy-button:hover {
+      color: #90caf9;
+    }
 
-        .hidden {
-            display: none;
-        }
-    </style>
+    .hint-container {
+      background-color: #263238;
+      border-left: 5px solid #29b6f6;
+      padding: 1rem;
+      border-radius: 0 0 10px 10px;
+      color: #b0bec5;
+      font-size: 1rem;
+      margin-top: -1rem;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @media (max-width: 600px) {
+      .configuration-wrapper {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .btn, select#ai-model-selector {
+        width: 100%;
+      }
+    }
+  </style>
 </head>
 
 <body>
-    <div class="container">
-        <div class="title">AI Code Reviewer</div>
+  <div class="container">
+    <div class="title">Doper: AI Code Reviewer</div>
 
-        <div class="configuration-wrapper">
-            <button onclick="selectFile()" class="btn">Choose File for Reviewing</button>
-            <label>Model: </label>
-            <select id="ai-model-selector">
-            </select>
-        </div>
-
-        <div class="code-section hidden" id="selectedFileDisplayWrapper">
-            <pre><code id="selectedFileDisplay" class="language-javascript"></code></pre>
-            <button onclick="copySelectedFileContentToClipBoard(selectedFileDisplay)" class="copy-button"><i
-                    class="fa-solid fa-copy"></i></button>
-        </div>
-
-        <div>
-            <button class="btn hidden" id="refactor-button" onclick="refactorCode()">Refactor File</button>
-        </div>
-
-        <div class="code-section hidden" id="refactoredFileDisplayWrapper">
-            <pre><code id="refactoredFileDisplay" class="language-javascript"></code></pre>
-            <button onclick="copySelectedFileContentToClipBoard(refactoredFileDisplay)" class="copy-button"><i
-                    class="fa-solid fa-copy"></i></button>
-            <div class="hint-container" id="hint-response"></div>
-        </div>
+    <div class="configuration-wrapper">
+      <button onclick="selectFile()" class="btn">
+        <i class="fa-solid fa-file-code"></i> Choose File
+      </button>
+      <div class="config-group">
+        <label for="ai-model-selector">Model:</label>
+        <select id="ai-model-selector"></select>
+      </div>
     </div>
 
-    <script>
-        const vscode = acquireVsCodeApi();
+    <div class="code-section hidden" id="selectedFileDisplayWrapper">
+      <pre><code id="selectedFileDisplay" class="language-javascript"></code></pre>
+      <button onclick="copySelectedFileContentToClipBoard(selectedFileDisplay)" class="copy-button">
+        <i class="fa-solid fa-copy"></i>
+      </button>
+    </div>
 
-        const selectedFileDisplayWrapper = document.getElementById('selectedFileDisplayWrapper');
-        const selectedFileDisplay = document.getElementById('selectedFileDisplay');
-        const refactorButton = document.getElementById('refactor-button');
-        const refactoredFileDisplayWrapper = document.getElementById('refactoredFileDisplayWrapper');
-        const refactoredFileDisplay = document.getElementById('refactoredFileDisplay');
-        const hintResponse = document.getElementById('hint-response');
+    <div>
+      <button class="btn hidden" id="refactor-button" onclick="refactorCode()">
+        <i class="fa-solid fa-wand-magic-sparkles"></i> Refactor File
+      </button>
+    </div>
 
-        const selectedPre = selectedFileDisplay.parentElement;
-        const refactoredPre = refactoredFileDisplay.parentElement;
+    <div class="code-section hidden" id="refactoredFileDisplayWrapper">
+      <pre><code id="refactoredFileDisplay" class="language-javascript"></code></pre>
+      <button onclick="copySelectedFileContentToClipBoard(refactoredFileDisplay)" class="copy-button">
+        <i class="fa-solid fa-copy"></i>
+      </button>
+      <div class="hint-container" id="hint-response"></div>
+    </div>
+  </div>
 
-        const aiModelSelector = document.getElementById('ai-model-selector');
+  <script>
+    const vscode = acquireVsCodeApi();
 
-        const chatGptModels = [
-            { value: 'gpt-4.1-nano', representation: 'gpt-4.1-nano' },
-            { value: 'gpt-3.5-turbo', representation: 'GPT-3.5 Turbo' },
-            { value: 'gpt-4', representation: 'GPT-4 (Legacy)' },
-            { value: 'gpt-4o', representation: 'GPT-4o (Omni, Latest)' },
-            { value: 'gpt-4o-mini', representation: 'GPT-4o Mini (Fast & Efficient)' },
-            { value: 'gpt-4.1', representation: 'GPT-4.1 (Enhanced Reasoning)' },
-            { value: 'gpt-4.5', representation: 'GPT-4.5 (Nuanced Conversations)' },
-            { value: 'o1', representation: 'OpenAI o1 (PhD-Level Reasoning)' },
-            { value: 'o1-mini', representation: 'OpenAI o1-mini (Fast & Precise)' },
-            { value: 'o3', representation: 'OpenAI o3 (Structured Reasoning)' },
-            { value: 'o3-mini', representation: 'OpenAI o3-mini (Technical Precision)' },
-            { value: 'o4-mini', representation: 'OpenAI o4-mini (High Efficiency)' },
-            { value: 'o4-mini-high', representation: 'OpenAI o4-mini-high (Advanced Reasoning)' },
-        ];
+    const selectedFileDisplayWrapper = document.getElementById('selectedFileDisplayWrapper');
+    const selectedFileDisplay = document.getElementById('selectedFileDisplay');
+    const refactorButton = document.getElementById('refactor-button');
+    const refactoredFileDisplayWrapper = document.getElementById('refactoredFileDisplayWrapper');
+    const refactoredFileDisplay = document.getElementById('refactoredFileDisplay');
+    const hintResponse = document.getElementById('hint-response');
+    const aiModelSelector = document.getElementById('ai-model-selector');
 
-        function populateSelector(element, array) {
+    const selectedPre = selectedFileDisplay.parentElement;
+    const refactoredPre = refactoredFileDisplay.parentElement;
+
+    const chatGptModels = [
+      { value: 'gpt-4.1-nano', representation: 'gpt-4.1-nano' },
+      { value: 'gpt-3.5-turbo', representation: 'GPT-3.5 Turbo' },
+      { value: 'gpt-4', representation: 'GPT-4 (Legacy)' },
+      { value: 'gpt-4o', representation: 'GPT-4o (Omni, Latest)' },
+      { value: 'gpt-4o-mini', representation: 'GPT-4o Mini (Fast & Efficient)' },
+      { value: 'gpt-4.1', representation: 'GPT-4.1 (Enhanced Reasoning)' },
+      { value: 'gpt-4.5', representation: 'GPT-4.5 (Nuanced Conversations)' },
+      { value: 'o1', representation: 'OpenAI o1 (PhD-Level Reasoning)' },
+      { value: 'o1-mini', representation: 'OpenAI o1-mini (Fast & Precise)' },
+      { value: 'o3', representation: 'OpenAI o3 (Structured Reasoning)' },
+      { value: 'o3-mini', representation: 'OpenAI o3-mini (Technical Precision)' },
+      { value: 'o4-mini', representation: 'OpenAI o4-mini (High Efficiency)' },
+      { value: 'o4-mini-high', representation: 'OpenAI o4-mini-high (Advanced Reasoning)' }
+    ];
+
+    function populateSelector(element, array) {
             for (let i = 0; i < array.length; i++) {
                 let newElement = document.createElement('option');
                 newElement.textContent = array[i].representation;
@@ -201,70 +228,66 @@
             }
 
             let initialSelectedModelIndex = 0;
-            aiModelSelector.options[initialSelectedModelIndex].selected = true; // set first model as default
+            element.options[initialSelectedModelIndex].selected = true; // set first model as default
             vscode.postMessage({ command: "OnModelSelected", content: chatGptModels[initialSelectedModelIndex] });
         }
 
-        aiModelSelector.addEventListener('change', function (event) {
-            const selectedIndex = event.target.selectedIndex;
-            console.log(chatGptModels[selectedIndex]);
+    aiModelSelector.addEventListener('change', (event) => {
+      const selectedModel = chatGptModels[event.target.selectedIndex];
+      vscode.postMessage({ command: "OnModelSelected", content: selectedModel });
+    });
 
-            vscode.postMessage({ command: "OnModelSelected", content: chatGptModels[selectedIndex] });
-        });
+    populateSelector(aiModelSelector, chatGptModels);
 
-        populateSelector(aiModelSelector, chatGptModels);
+    selectedPre.addEventListener('scroll', () => syncScroll(selectedPre, refactoredPre));
+    refactoredPre.addEventListener('scroll', () => syncScroll(refactoredPre, selectedPre));
 
-        selectedPre.addEventListener('scroll', () => syncScroll(selectedPre, refactoredPre));
-        refactoredPre.addEventListener('scroll', () => syncScroll(refactoredPre, selectedPre));
+    function selectFile() {
+      hide(refactorButton);
+      hide(selectedFileDisplayWrapper);
+      hide(refactoredFileDisplayWrapper);
+      vscode.postMessage({ command: "OnFileSelected" });
+    }
 
-        function selectFile() {
-            hide(refactorButton);
-            hide(selectedFileDisplayWrapper);
-            hide(refactoredFileDisplayWrapper);
-            vscode.postMessage({ command: "OnFileSelected" });
-        }
+    function refactorCode() {
+      vscode.postMessage({ command: 'OnSendToChatGPT', content: selectedFileDisplay.innerText });
+    }
 
-        function refactorCode() {
-            vscode.postMessage({ command: 'OnSendToChatGPT', content: selectedFileDisplay.innerText });
-        }
+    function show(element) {
+      element.classList.remove('hidden');
+    }
 
-        function show(element) {
-            element.classList.remove('hidden');
-        }
+    function hide(element) {
+      element.classList.add('hidden');
+    }
 
-        function hide(element) {
-            element.classList.add('hidden');
-        }
+    function copySelectedFileContentToClipBoard(element) {
+      navigator.clipboard.writeText(element.textContent);
+    }
 
-        function copySelectedFileContentToClipBoard(htmlToCopyFrom) {
-            navigator.clipboard.writeText(htmlToCopyFrom.textContent);
-        }
+    function syncScroll(source, target) {
+      const scrollRatio = source.scrollTop / (source.scrollHeight - source.clientHeight);
+      target.scrollTop = scrollRatio * (target.scrollHeight - target.clientHeight);
+    }
 
-        function syncScroll(source, target) {
-            const scrollRatio = source.scrollTop / (source.scrollHeight - source.clientHeight);
-            target.scrollTop = scrollRatio * (target.scrollHeight - target.clientHeight);
-        }
-
-        window.addEventListener('message', event => {
-            const msg = event.data;
-
-            switch (msg.command) {
-                case 'DisplayFileContent':
-                    selectedFileDisplay.textContent = msg.content;
-                    Prism.highlightElement(selectedFileDisplay);
-                    show(selectedFileDisplayWrapper);
-                    show(refactorButton);
-                    break;
-                case 'ReceivedResponseFromChatGPT':
-                    let jsonResponse = JSON.parse(msg.content.output_text);
-                    refactoredFileDisplay.textContent = jsonResponse.code;
-                    Prism.highlightElement(refactoredFileDisplay);
-                    hintResponse.textContent = jsonResponse.hint;
-                    show(refactoredFileDisplayWrapper);
-                    break;
-            }
-        });
-    </script>
+    window.addEventListener('message', (event) => {
+      const msg = event.data;
+      switch (msg.command) {
+        case 'DisplayFileContent':
+          selectedFileDisplay.textContent = msg.content;
+          Prism.highlightElement(selectedFileDisplay);
+          show(selectedFileDisplayWrapper);
+          show(refactorButton);
+          break;
+        case 'ReceivedResponseFromChatGPT':
+          const jsonResponse = JSON.parse(msg.content.output_text);
+          refactoredFileDisplay.textContent = jsonResponse.code;
+          Prism.highlightElement(refactoredFileDisplay);
+          hintResponse.textContent = jsonResponse.hint;
+          show(refactoredFileDisplayWrapper);
+          break;
+      }
+    });
+  </script>
 </body>
-
 </html>
