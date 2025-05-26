@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Code Reviewer</title>
+    <title>Doper (AI Code Reviewer)</title>
 
     <link href="https://cdn.jsdelivr.net/npm/prismjs@1/themes/prism-tomorrow.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-core.min.js"></script>
@@ -176,7 +176,8 @@
 
         const aiModelSelector = document.getElementById('ai-model-selector');
 
-        let chatGptModels = [
+        const chatGptModels = [
+            { value: 'gpt-4.1-nano', representation: 'gpt-4.1-nano' },
             { value: 'gpt-3.5-turbo', representation: 'GPT-3.5 Turbo' },
             { value: 'gpt-4', representation: 'GPT-4 (Legacy)' },
             { value: 'gpt-4o', representation: 'GPT-4o (Omni, Latest)' },
@@ -198,11 +199,17 @@
                 newElement.value = array[i].value;
                 element.appendChild(newElement);
             }
+
+            let initialSelectedModelIndex = 0;
+            aiModelSelector.options[initialSelectedModelIndex].selected = true; // set first model as default
+            vscode.postMessage({ command: "OnModelSelected", content: chatGptModels[initialSelectedModelIndex] });
         }
 
         aiModelSelector.addEventListener('change', function (event) {
             const selectedIndex = event.target.selectedIndex;
             console.log(chatGptModels[selectedIndex]);
+
+            vscode.postMessage({ command: "OnModelSelected", content: chatGptModels[selectedIndex] });
         });
 
         populateSelector(aiModelSelector, chatGptModels);

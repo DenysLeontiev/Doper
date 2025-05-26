@@ -3,9 +3,11 @@ import OpenAI from 'openai';
 import * as path from 'path'
 import * as fs from 'fs'
 
-const openAIClient = new OpenAI({
+const openAIClient: OpenAI = new OpenAI({
 	apiKey: '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'
 });
+
+let chatGptModel: string = "gpt-4.1-nano";
 
 export async function activate(context: vscode.ExtensionContext) {
 
@@ -70,6 +72,11 @@ async function openReviewPanel(context: vscode.ExtensionContext, fileToLoad?: vs
 				});
 				vscode.window.showInformationMessage("Ended Refactoring");
 				break;
+            case "OnModelSelected":
+                let newChatGptModel = message.content.value;
+                setChatGptModel(newChatGptModel);
+                vscode.window.showInformationMessage("New Model Selected: " + newChatGptModel);
+                break;
 		}
 	});
 
@@ -86,16 +93,19 @@ async function openReviewPanel(context: vscode.ExtensionContext, fileToLoad?: vs
 
 async function queryChat(content: string): Promise<OpenAI.Responses.Response> {
 
-	const model: string = "gpt-4.1-nano";
 	const instructions: string = "You are a code assistant. Refactor and imrpove code and reply with the full result ONLY as JSON is that format {hint:'Hints from response code, some recommendation', code: 'The actual code'}. No comments or explanations. No markdown formatting";
 
 	const response = await openAIClient.responses.create({
-		model: model,
+		model: chatGptModel,
 		instructions: instructions,
 		input: content,
 	});
 
 	return response;
+}
+
+function setChatGptModel(model: string) {
+    chatGptModel = model;
 }
 
 function getWebviewHtml() {
