@@ -31,6 +31,16 @@
             gap: 2rem;
         }
 
+        .configuration-wrapper {
+            display: flex;
+            flex-direction: row;
+        }
+
+        .configuration-wrapper label {
+            font-weight: bolder;
+            font-size: larger;
+        }
+
         .title {
             text-align: center;
             font-size: 2rem;
@@ -101,8 +111,14 @@
     <div class="container">
         <div class="title">AI Code Reviewer</div>
 
-        <div>
+        <div class="configuration-wrapper">
             <button onclick="selectFile()" class="btn">Choose File for Reviewing</button>
+            <label>Choose your model: </label>
+            <select id="ai-model-selector">
+            </select>
+            <button onclick="getOption()">
+                Check option
+            </button>
         </div>
 
         <div class="code-section hidden" id="selectedFileDisplayWrapper">
@@ -136,9 +152,42 @@
         const selectedPre = selectedFileDisplay.parentElement;
         const refactoredPre = refactoredFileDisplay.parentElement;
 
+        const aiModelSelector = document.getElementById('ai-model-selector');
+        
+        let chatGptModels = [
+            { value: 'gpt-3.5-turbo', representation: 'GPT-3.5 Turbo' },
+            { value: 'gpt-4', representation: 'GPT-4 (Legacy)' },
+            { value: 'gpt-4o', representation: 'GPT-4o (Omni, Latest)' },
+            { value: 'gpt-4o-mini', representation: 'GPT-4o Mini (Fast & Efficient)' },
+            { value: 'gpt-4.1', representation: 'GPT-4.1 (Enhanced Reasoning)' },
+            { value: 'gpt-4.5', representation: 'GPT-4.5 (Nuanced Conversations)' },
+            { value: 'o1', representation: 'OpenAI o1 (PhD-Level Reasoning)' },
+            { value: 'o1-mini', representation: 'OpenAI o1-mini (Fast & Precise)' },
+            { value: 'o3', representation: 'OpenAI o3 (Structured Reasoning)' },
+            { value: 'o3-mini', representation: 'OpenAI o3-mini (Technical Precision)' },
+            { value: 'o4-mini', representation: 'OpenAI o4-mini (High Efficiency)' },
+            { value: 'o4-mini-high', representation: 'OpenAI o4-mini-high (Advanced Reasoning)' },
+        ];
+
+        function populateSelector(element, array) {
+            for (let i = 0; i < array.length; i++) {
+                let newElement = document.createElement('option');
+                newElement.textContent = array[i].representation;
+                newElement.value = array[i].value;
+                element.appendChild(newElement);
+            }
+        }
+
+        aiModelSelector.addEventListener('change', function (event) {
+            const selectedIndex = event.target.selectedIndex;
+            console.log(chatGptModels[selectedIndex]);
+        });
+
+        populateSelector(aiModelSelector, chatGptModels);
+
         selectedPre.addEventListener('scroll', () => syncScroll(selectedPre, refactoredPre));
         refactoredPre.addEventListener('scroll', () => syncScroll(refactoredPre, selectedPre));
-        
+
         function selectFile() {
             hide(refactorButton);
             hide(selectedFileDisplayWrapper);
