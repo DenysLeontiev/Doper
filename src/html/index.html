@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Doper (AI Code Reviewer)</title>
 
   <link href="https://cdn.jsdelivr.net/npm/prismjs@1/themes/prism-tomorrow.css" rel="stylesheet" />
@@ -95,6 +96,17 @@
       box-shadow: 0 0 8px rgba(100, 181, 246, 0.8);
     }
 
+    #prompt-input {
+      width: 90%;
+      background-color: #1e1e1e;
+      color: #fff;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
     .code-section {
       position: relative;
       background-color: #1e1e1e;
@@ -146,7 +158,8 @@
         align-items: flex-start;
       }
 
-      .btn, select#ai-model-selector {
+      .btn,
+      select#ai-model-selector {
         width: 100%;
       }
     }
@@ -167,6 +180,7 @@
       </div>
     </div>
 
+    <textarea id="prompt-input" placeholder="Enter prompt..."></textarea>
     <div class="code-section hidden" id="selectedFileDisplayWrapper">
       <pre><code id="selectedFileDisplay" class="language-javascript"></code></pre>
       <button onclick="copySelectedFileContentToClipBoard(selectedFileDisplay)" class="copy-button">
@@ -200,6 +214,8 @@
     const hintResponse = document.getElementById('hint-response');
     const aiModelSelector = document.getElementById('ai-model-selector');
 
+    const promptInput = document.getElementById('prompt-input');
+
     const selectedPre = selectedFileDisplay.parentElement;
     const refactoredPre = refactoredFileDisplay.parentElement;
 
@@ -220,17 +236,17 @@
     ];
 
     function populateSelector(element, array) {
-            for (let i = 0; i < array.length; i++) {
-                let newElement = document.createElement('option');
-                newElement.textContent = array[i].representation;
-                newElement.value = array[i].value;
-                element.appendChild(newElement);
-            }
+      for (let i = 0; i < array.length; i++) {
+        let newElement = document.createElement('option');
+        newElement.textContent = array[i].representation;
+        newElement.value = array[i].value;
+        element.appendChild(newElement);
+      }
 
-            let initialSelectedModelIndex = 0;
-            element.options[initialSelectedModelIndex].selected = true; // set first model as default
-            vscode.postMessage({ command: "OnModelSelected", content: chatGptModels[initialSelectedModelIndex] });
-        }
+      let initialSelectedModelIndex = 0;
+      element.options[initialSelectedModelIndex].selected = true; // set first model as default
+      vscode.postMessage({ command: "OnModelSelected", content: chatGptModels[initialSelectedModelIndex] });
+    }
 
     aiModelSelector.addEventListener('change', (event) => {
       const selectedModel = chatGptModels[event.target.selectedIndex];
@@ -250,7 +266,11 @@
     }
 
     function refactorCode() {
-      vscode.postMessage({ command: 'OnSendToChatGPT', content: selectedFileDisplay.innerText });
+      let body = {
+        fileContent: selectedFileDisplay.innerText,
+        userPrompt: promptInput.value
+      }
+      vscode.postMessage({ command: 'OnSendToChatGPT', content: body });
     }
 
     function show(element) {
@@ -290,4 +310,5 @@
     });
   </script>
 </body>
+
 </html>
