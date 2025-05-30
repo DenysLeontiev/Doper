@@ -191,6 +191,7 @@
     <div class="token-handler">
       <input type="text" class="token-input" id="token-input">
       <button class="btn" id="save-token-button" onclick="saveApiKey()">Save</button>
+      <button class="btn" id="delete-token-button" onclick="deleteApiKey()">Delete</button>
     </div>
 
     <div class="configuration-wrapper">
@@ -313,6 +314,10 @@
       let tokenValue = tokenInput.value;
 
       vscode.postMessage({ command: 'OnApiKeySaved', content: tokenValue });
+    }
+
+    function deleteApiKey() {
+      vscode.postMessage({ command: 'OnApiKeyDeleted' })
     }
 
     function syncScroll(source, target) {

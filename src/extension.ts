@@ -80,9 +80,12 @@ async function openReviewPanel(context: vscode.ExtensionContext, fileToLoad?: vs
                 break;
             case "OnApiKeySaved":
                 let apiKeyValue = message.content;
-
                 await context.secrets.store(openAIApiKey, apiKeyValue);
+
                 setApiKey(context);
+                break;
+            case "OnApiKeyDeleted":
+                deleteApiKey(context);
                 break;
         }
     });
@@ -123,6 +126,12 @@ async function setApiKey(context: vscode.ExtensionContext): Promise<void> {
     else {
         vscode.window.showInformationMessage("No OpenAI Api Key available");
     }
+}
+
+async function deleteApiKey(context: vscode.ExtensionContext): Promise<void> {
+    await context.secrets.delete(openAIApiKey);
+    openAIClient.apiKey = "";
+    vscode.window.showInformationMessage("OpenAI Api Key is deleted");
 }
 
 function setChatGptModel(model: string): void {
