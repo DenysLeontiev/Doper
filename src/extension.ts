@@ -4,12 +4,16 @@ import * as path from 'path'
 import * as fs from 'fs'
 
 const openAIClient: OpenAI = new OpenAI({
-    apiKey: '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'
+    apiKey: ""
 });
+
+const openAIApiKey: string = "openAIKey";
 
 let chatGptModel: string = "gpt-4.1-nano";
 
 export async function activate(context: vscode.ExtensionContext) {
+
+    setApiKey(context);
 
     const webviewPanelCommand = vscode.commands.registerCommand('doper.doper', async () => {
         openReviewPanel(context);
@@ -34,9 +38,7 @@ async function openReviewPanel(context: vscode.ExtensionContext, fileToLoad?: vs
     let panel: vscode.WebviewPanel = vscode.window.createWebviewPanel(panelTitle,
         panelIdentifier,
         panelViewColumnOptions,
-        {
-            enableScripts: true
-        });
+        panelOptions);
 
     const filePath: vscode.Uri = vscode.Uri.file(path.join(context.extensionPath, 'src', 'html', 'index.html'));
     panel.webview.html = fs.readFileSync(filePath.fsPath, 'utf8');
@@ -76,6 +78,12 @@ async function openReviewPanel(context: vscode.ExtensionContext, fileToLoad?: vs
                 setChatGptModel(newChatGptModel);
                 vscode.window.showInformationMessage("New Model Selected: " + newChatGptModel);
                 break;
+            case "OnApiKeySaved":
+                let apiKeyValue = message.content;
+
+                await context.secrets.store(openAIApiKey, apiKeyValue);
+                setApiKey(context);
+                break;
         }
     });
 
@@ -105,7 +113,19 @@ async function queryChat(content: string, userPrompt?: string): Promise<OpenAI.R
     return response;
 }
 
-function setChatGptModel(model: string) {
+async function setApiKey(context: vscode.ExtensionContext): Promise<void> {
+    let apiKey = await context.secrets.get(openAIApiKey);
+
+    if (apiKey) {
+        openAIClient.apiKey = apiKey;
+        vscode.window.showInformationMessage("OpenAI Api Key is set");
+    }
+    else {
+        vscode.window.showInformationMessage("No OpenAI Api Key available");
+    }
+}
+
+function setChatGptModel(model: string): void {
     chatGptModel = model;
 }
 
