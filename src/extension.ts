@@ -109,16 +109,17 @@ async function openReviewPanel(context: vscode.ExtensionContext, fileToLoad?: vs
 
 function handleTextSelection() {
     const editor = vscode.window.activeTextEditor;
-
-    if (editor) {
-        const selection = editor.selection;
-        const selectedText = editor.document.getText(selection);
-
-        panel.webview.postMessage({
-            command: 'OnTextSelected',
-            content: selectedText
-        });
+    if (!editor || !editor.document || !editor.selection || !panel || !panel.webview) {
+        return;
     }
+
+    const selection = editor.selection;
+    const selectedText = editor.document.getText(selection);
+
+    panel.webview.postMessage({
+        command: 'OnTextSelected',
+        content: selectedText
+    });
 }
 
 async function queryChat(content: string, userPrompt?: string): Promise<OpenAI.Responses.Response> {
