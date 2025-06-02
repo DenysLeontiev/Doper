@@ -402,6 +402,12 @@
           hintResponse.textContent = jsonResponse.hint;
           show(refactoredFileDisplayWrapper);
           break;
+        case 'OnTextSelected':
+          selectedFileDisplay.textContent = msg.content;
+          Prism.highlightElement(selectedFileDisplay);
+          show(selectedFileDisplayWrapper);
+          show(refactorButton);
+          break;
       }
     });
   </script>

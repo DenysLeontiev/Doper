@@ -26,6 +26,10 @@
       {
         "command": "doper.reviewSelectedFile",
         "title": "Review with AI Code Reviewer"
+      },
+      {
+        "command": "doper.getSelectedText",
+        "title": "Process selected text"
       }
     ],
     "menus": {
@@ -33,6 +37,13 @@
         {
           "command": "doper.reviewSelectedFile",
           "when": "resourceLangId",
+          "group": "navigation"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "doper.getSelectedText",
+          "when": "editorHasSelection",
           "group": "navigation"
         }
       ]
